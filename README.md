@@ -58,10 +58,10 @@ When the `Ads` table is empty, startup adds three sample ads: a mountain bike, a
 
 ## PATCH example
 
-PATCH uses JSON Patch and requires the `application/json-patch+json` content type:
+PATCH uses JSON Patch and requires the `application/json-patch+json` content type. Use an `id` from `GET /Ads` or the `Location` header returned by `POST /Ads`:
 
 ```http
-PATCH /Ads/1
+PATCH /Ads/{id}
 Content-Type: application/json-patch+json
 
 [
