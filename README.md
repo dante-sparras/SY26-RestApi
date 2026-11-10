@@ -20,9 +20,18 @@ If you use SQL Server Express, change `localhost` to `localhost\SQLEXPRESS`.
 ```powershell
 dotnet tool restore
 dotnet restore AdsApi
-dotnet ef database update --project AdsApi
 dotnet run --project AdsApi
 ```
+
+On startup the API creates the database if it does not exist, applies the Code First migrations, and inserts three sample ads when the `Ads` table is empty.
+
+If you prefer to apply the migration manually before starting:
+
+```powershell
+dotnet ef database update --project AdsApi
+```
+
+The SQL Server user must be allowed to create the database and change its schema.
 
 Open Swagger UI at the URL shown in the console, normally:
 
@@ -42,6 +51,10 @@ http://localhost:5168/swagger
 | DELETE | `/Ads/{id}` | Delete an advertisement | 204 | 404 |
 
 Invalid request data returns `400 Bad Request` with validation details.
+
+## Sample data
+
+When the `Ads` table is empty, startup adds three sample ads: a mountain bike, an office chair, and a gaming console. Seeding is skipped when ads already exist. If all ads are deleted, the samples are restored on the next restart.
 
 ## PATCH example
 
