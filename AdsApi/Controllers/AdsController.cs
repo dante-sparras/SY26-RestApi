@@ -1,6 +1,7 @@
 using AdsApi.Data;
 using AdsApi.Dtos;
 using AdsApi.Models;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -54,6 +55,42 @@ public class AdsController : ControllerBase
         if (ad is null)
         {
             return NotFound();
+        }
+
+        ad.Title = request.Title;
+        ad.Description = request.Description;
+        ad.Price = request.Price;
+        await _db.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    [HttpPatch("{id:int}")]
+    [Consumes("application/json-patch+json")]
+    public async Task<IActionResult> Patch(int id, [FromBody] JsonPatchDocument<AdRequestDto> patchDocument)
+    {
+        if (patchDocument is null)
+        {
+            return BadRequest();
+        }
+
+        var ad = await _db.Ads.FindAsync(id);
+        if (ad is null)
+        {
+            return NotFound();
+        }
+
+        var request = new AdRequestDto
+        {
+            Title = ad.Title,
+            Description = ad.Description,
+            Price = ad.Price
+        };
+
+        patchDocument.ApplyTo(request, ModelState);
+        if (!ModelState.IsValid || !TryValidateModel(request))
+        {
+            return ValidationProblem(ModelState);
         }
 
         ad.Title = request.Title;
