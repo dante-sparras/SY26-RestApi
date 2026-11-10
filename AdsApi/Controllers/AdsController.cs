@@ -19,6 +19,7 @@ public class AdsController : ControllerBase
     }
 
     [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<AdResponseDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<AdResponseDto>>> GetAll()
     {
         var ads = await _db.Ads.ToListAsync();
@@ -26,6 +27,8 @@ public class AdsController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
+    [ProducesResponseType(typeof(AdResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<AdResponseDto>> GetById(int id)
     {
         var ad = await _db.Ads.FindAsync(id);
@@ -33,6 +36,8 @@ public class AdsController : ControllerBase
     }
 
     [HttpPost]
+    [ProducesResponseType(typeof(AdResponseDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<AdResponseDto>> Create(AdRequestDto request)
     {
         var ad = new Ad
@@ -49,6 +54,9 @@ public class AdsController : ControllerBase
     }
 
     [HttpPut("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update(int id, AdRequestDto request)
     {
         var ad = await _db.Ads.FindAsync(id);
@@ -67,6 +75,9 @@ public class AdsController : ControllerBase
 
     [HttpPatch("{id:int}")]
     [Consumes("application/json-patch+json")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Patch(int id, [FromBody] JsonPatchDocument<AdRequestDto> patchDocument)
     {
         if (patchDocument is null)
@@ -102,6 +113,8 @@ public class AdsController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(int id)
     {
         var ad = await _db.Ads.FindAsync(id);
